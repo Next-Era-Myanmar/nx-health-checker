@@ -2,7 +2,7 @@
 
 use axum::{
     extract::{State, Form, Path},
-    http::{HeaderMap, StatusCode},
+    http::{HeaderMap, StatusCode, header},
     response::{Html, Response, Json},
 };
 use sqlx::{SqlitePool, Row};
@@ -470,6 +470,17 @@ pub async fn health_check(
             .unwrap()
             .into()),
     }
+}
+
+// Prometheus metrics handler with proper Content-Type
+pub async fn prometheus_metrics() -> Response {
+    let metrics_data = crate::metrics::gather_metrics();
+    
+    Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "text/plain; version=0.0.4; charset=utf-8")
+        .body(axum::body::Body::from(metrics_data))
+        .unwrap()
 }
 
 // Change password handler

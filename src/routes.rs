@@ -1,5 +1,4 @@
 use axum::{
-    response::IntoResponse,
     routing::{get, post, put, delete},
     Router,
 };
@@ -7,7 +6,6 @@ use sqlx::SqlitePool;
 use crate::auth::SessionStore;
 use crate::collector::GLOBAL_COLLECTOR;
 use crate::handlers;
-use crate::metrics;
 use tower_http::services::ServeDir;
 
 pub fn create_router(pool: SqlitePool, sessions: SessionStore) -> Router {
@@ -29,7 +27,7 @@ pub fn create_router(pool: SqlitePool, sessions: SessionStore) -> Router {
         .route("/health", get(handlers::health_check))
         .route("/api/services/:id/health", get(handlers::check_service_health))
         .route("/api/services/health", get(handlers::check_all_services_health))
-        .route("/metrics", get(|| async move { metrics::gather_metrics().into_response() }))
+        .route("/metrics", get(handlers::prometheus_metrics))
         .route("/api/metrics/restart", post({
             let pool2 = pool.clone();
             move || async move {
