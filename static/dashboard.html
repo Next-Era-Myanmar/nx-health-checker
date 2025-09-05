@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NX Health Checker - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+
+        .brand-tagline {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--background-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: var(--primary-color); }
+        .stat-icon.success { background: var(--success-color); }
+        .stat-icon.warning { background: var(--warning-color); }
+        .stat-icon.danger { background: var(--danger-color); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        /* Services Section */
+        .services-section {
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .services-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--background-color);
+        }
+
+        .services-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .services-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            background: var(--surface-color);
+        }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .services-table th {
+            background: var(--background-color);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .services-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .services-table tr:hover {
+            background: var(--background-color);
+        }
+
+        .service-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .service-url {
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+            max-width: 200px;
+        }
+
+        .service-duration {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-checking {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-never {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .last-checked {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            min-width: 36px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: var(--background-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            background: var(--surface-color);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--danger-color);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .main-container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .services-table th,
+            .services-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-name {
+                font-size: 1.25rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary-color);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: var(--transition);
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: var(--success-color);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .toast-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .toast-message {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="/assets/logo.png" alt="NX Health Checker" class="logo">
+                <div class="brand">
+                    <div class="brand-name">NX Health Checker</div>
+                    <div class="brand-tagline">Monitor your services with confidence</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="restartCollectorsBtn" class="btn btn-secondary" onclick="restartCollectors()">
+                    <i class="fas fa-sync-alt"></i>
+                    Restart Collectors
+                </button>
+                <button id="checkAllServicesBtn" class="btn btn-primary" onclick="checkAllServicesHealth(false)">
+                    <i class="fas fa-heartbeat"></i>
+                    Check All Services
+                </button>
+                <button id="addServiceBtn" class="btn btn-primary" onclick="openAddServiceModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Service
+                </button>
+                <a href="/change-password" class="btn btn-secondary">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </a>
+                <a href="/logout" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">Service Health Dashboard</h1>
+            <p class="page-subtitle">Monitor the health and performance of your services in real-time</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Services</span>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-server"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalServices">-</div>
+                <div class="stat-change">Active monitoring</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Healthy Services</span>
+                    <div class="stat-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="healthyServices">-</div>
+                <div class="stat-change">All systems operational</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Response Time</span>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="avgResponseTime">-</div>
+                <div class="stat-change">ms average</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Uptime</span>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="uptime">-</div>
+                <div class="stat-change">Last 24 hours</div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="services-section">
+            <div class="services-header">
+                <h2 class="services-title">Service Status</h2>
+                <div class="services-actions">
+                    <button id="refreshBtn" class="btn btn-secondary" onclick="loadServices()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Health Check URL</th>
+                            <th>Check Duration</th>
+                            <th>Status</th>
+                            <th>Last Checked</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                        <!-- Services will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <!-- Add Service Modal -->
+    <div id="addServiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Service</h3>
+                <button class="modal-close" onclick="closeModal('addServiceModal')">&times;</button>
+            </div>
+            <form id="serviceForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="serviceName" class="form-label">Service Name</label>
+                        <input type="text" id="serviceName" name="serviceName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="healthcheckUrl" class="form-label">Health Check URL</label>
+                        <input type="url" id="healthcheckUrl" name="healthcheckUrl" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="healthcheckDuration" class="form-label">Check Duration (seconds)</label>
+                        <input type="number" id="healthcheckDuration" name="healthcheckDuration" class="form-input" min="5" max="3600" value="30" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div id="editServiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Service</h3>
+                <button class="modal-close" onclick="closeModal('editServiceModal')">&times;</button>
+            </div>
+            <form id="editServiceForm">
+                <input type="hidden" id="editServiceId" name="serviceId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editServiceName" class="form-label">Service Name</label>
+                        <input type="text" id="editServiceName" name="serviceName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editHealthcheckUrl" class="form-label">Health Check URL</label>
+                        <input type="url" id="editHealthcheckUrl" name="healthcheckUrl" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editHealthcheckDuration" class="form-label">Check Duration (seconds)</label>
+                        <input type="number" id="editHealthcheckDuration" name="healthcheckDuration" class="form-input" min="5" max="3600" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editServiceModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        let currentServiceId = null;
+        let services = [];
+        let responseTimes = new Map(); // Store response times for each service
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServices();
+            updateStats();
+        });
+
+        // Load services
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/services');
+                if (response.ok) {
+                    services = await response.json();
+                    displayServices(services);
+                    updateStats();
+                    
+                    // Automatically check health of all services after loading
+                    if (services.length > 0) {
+                        console.log('🚀 Auto-checking health for', services.length, 'services');
+                        // Reduced delay and added better logging
+                        setTimeout(async () => {
+                            console.log('⏰ Starting auto-health check...');
+                            await checkAllServicesHealth(true); // Auto-check
+                            console.log('✅ Auto-health check completed');
+                        }, 200); // Reduced delay for faster response
+                    }
+                } else {
+                    showToast('Error loading services', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading services', 'error');
+            }
+        }
+
+        // Load services while preserving status
+        async function loadServicesPreserveStatus() {
+            const currentStatuses = {};
+            const currentLastChecked = {};
+            
+            // Store current statuses
+            document.querySelectorAll('#servicesTableBody tr').forEach(row => {
+                const serviceName = row.querySelector('.service-name').textContent;
+                const statusCell = row.querySelector('.status-badge');
+                const lastCheckedCell = row.querySelector('.last-checked');
+                
+                if (statusCell && lastCheckedCell) {
+                    currentStatuses[serviceName] = {
+                        text: statusCell.textContent.trim(),
+                        class: statusCell.className
+                    };
+                    currentLastChecked[serviceName] = lastCheckedCell.textContent.trim();
+                }
+            });
+
+            try {
+                const response = await fetch('/api/services');
+                if (response.ok) {
+                    services = await response.json();
+                    displayServices(services);
+                    
+                    // Restore statuses
+                    document.querySelectorAll('#servicesTableBody tr').forEach(row => {
+                        const serviceName = row.querySelector('.service-name').textContent;
+                        const statusCell = row.querySelector('.status-badge');
+                        const lastCheckedCell = row.querySelector('.last-checked');
+                        
+                        if (currentStatuses[serviceName] && statusCell && lastCheckedCell) {
+                            statusCell.textContent = currentStatuses[serviceName].text;
+                            statusCell.className = currentStatuses[serviceName].class;
+                            lastCheckedCell.textContent = currentLastChecked[serviceName];
+                        }
+                    });
+                    
+                    updateStats();
+                    
+                    // Auto-check health for any new services that don't have status
+                    const servicesWithoutStatus = document.querySelectorAll('.status-badge.status-checking');
+                    if (servicesWithoutStatus.length > 0) {
+                        console.log('🔄 Auto-checking health for', servicesWithoutStatus.length, 'new services');
+                        setTimeout(async () => {
+                            console.log('⏰ Starting fallback health check...');
+                            await checkAllServicesHealth(true); // Auto-check
+                            console.log('✅ Fallback health check completed');
+                        }, 300);
+                    }
+                } else {
+                    showToast('Error loading services', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading services', 'error');
+            }
+        }
+
+        // Display services
+        function displayServices(services) {
+            const tbody = document.getElementById('servicesTableBody');
+            tbody.innerHTML = '';
+
+            services.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="service-name">${service.service_name}</div>
+                    </td>
+                    <td>
+                        <div class="service-url">${service.healthcheck_url}</div>
+                    </td>
+                    <td>
+                        <div class="service-duration">${service.healthcheck_duration_seconds}s</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-checking">Checking...</span>
+                    </td>
+                    <td>
+                        <div class="last-checked">Never</div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="checkServiceHealth(${service.id})">
+                                <i class="fas fa-heartbeat"></i>
+                                Check Now
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="editService(${service.id})">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Check service health
+        async function checkServiceHealth(serviceId) {
+            // Find the row by looking for the service ID in the onclick attribute
+            let row = null;
+            document.querySelectorAll('#servicesTableBody tr').forEach(tr => {
+                const checkButton = tr.querySelector(`button[onclick="checkServiceHealth(${serviceId})"]`);
+                if (checkButton) {
+                    row = tr;
+                }
+            });
+            
+            if (!row) {
+                console.log('Could not find row for service ID:', serviceId);
+                return;
+            }
+
+            const statusCell = row.querySelector('.status-badge');
+            const lastCheckedCell = row.querySelector('.last-checked');
+
+            statusCell.textContent = 'Checking...';
+            statusCell.className = 'status-badge status-checking';
+
+            const startTime = performance.now();
+
+            try {
+                const response = await fetch(`/api/services/${serviceId}/health`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const status = result.status === 'UP' ? 'UP' : 'DOWN';
+                    const statusClass = status === 'UP' ? 'status-up' : 'status-down';
+                    
+                    statusCell.textContent = status;
+                    statusCell.className = `status-badge ${statusClass}`;
+                    lastCheckedCell.textContent = new Date().toLocaleString();
+                    
+                    // Store response time
+                    const responseTime = Math.round(performance.now() - startTime);
+                    responseTimes.set(serviceId, responseTime);
+                    console.log(`⏱️ Service ${serviceId} response time: ${responseTime}ms`);
+                } else {
+                    statusCell.textContent = 'DOWN';
+                    statusCell.className = 'status-badge status-down';
+                    lastCheckedCell.textContent = new Date().toLocaleString();
+                    
+                    // Store response time even for failed requests
+                    const responseTime = Math.round(performance.now() - startTime);
+                    responseTimes.set(serviceId, responseTime);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusCell.textContent = 'DOWN';
+                statusCell.className = 'status-badge status-down';
+                lastCheckedCell.textContent = new Date().toLocaleString();
+                
+                // Store response time even for errors
+                const responseTime = Math.round(performance.now() - startTime);
+                responseTimes.set(serviceId, responseTime);
+            }
+            
+            // Update stats after individual health check
+            updateStats();
+        }
+
+        // Check all services health
+        async function checkAllServicesHealth(isAutoCheck = false) {
+            console.log('🔍 checkAllServicesHealth called with isAutoCheck:', isAutoCheck);
+            
+            const button = document.getElementById('checkAllServicesBtn');
+            const originalText = button.innerHTML;
+            
+            // Only show loading state if it's a manual check
+            if (!isAutoCheck) {
+                button.innerHTML = '<span class="spinner"></span> Checking...';
+                button.disabled = true;
+            }
+
+            // Set all statuses to checking
+            const statusCells = document.querySelectorAll('.status-badge');
+            console.log('📊 Found', statusCells.length, 'status cells to update');
+            statusCells.forEach(statusCell => {
+                statusCell.textContent = 'Checking...';
+                statusCell.className = 'status-badge status-checking';
+            });
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch('/api/services/health');
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const results = await response.json();
+                    console.log('📡 Response data:', results);
+                    
+                    // Calculate total response time for bulk health check
+                    const totalResponseTime = Math.round(performance.now() - startTime);
+                    console.log(`⏱️ Bulk health check total response time: ${totalResponseTime}ms`);
+                    
+                    // Update each service status
+                    if (results.services && Array.isArray(results.services)) {
+                        console.log('🔄 Processing', results.services.length, 'services');
+                        results.services.forEach(result => {
+                            console.log('🔧 Processing service:', result.service_name, 'Status:', result.status);
+                            // Find the row by looking for the service name in the table
+                            let row = null;
+                            document.querySelectorAll('#servicesTableBody tr').forEach(tr => {
+                                const nameCell = tr.querySelector('.service-name');
+                                if (nameCell && nameCell.textContent === result.service_name) {
+                                    row = tr;
+                                }
+                            });
+                            
+                            if (row) {
+                                const statusCell = row.querySelector('.status-badge');
+                                const lastCheckedCell = row.querySelector('.last-checked');
+                                
+                                const status = result.status === 'UP' ? 'UP' : 'DOWN';
+                                const statusClass = status === 'UP' ? 'status-up' : 'status-down';
+                                
+                                statusCell.textContent = status;
+                                statusCell.className = `status-badge ${statusClass}`;
+                                lastCheckedCell.textContent = new Date().toLocaleString();
+                                console.log('✅ Updated service', result.service_name, 'to', status);
+                                
+                                // Store response time (divide total by number of services for average)
+                                const avgResponseTime = Math.round(totalResponseTime / results.services.length);
+                                responseTimes.set(result.service_id, avgResponseTime);
+                            } else {
+                                console.log('❌ Could not find row for service:', result.service_name);
+                            }
+                        });
+                        
+                        // Update stats after all services are processed
+                        updateStats();
+                        console.log('📊 Stats updated after health check');
+                    } else {
+                        console.log('❌ No services array found in response:', results);
+                    }
+                    
+                    if (!isAutoCheck) {
+                        showToast('All services checked successfully', 'success');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('Response not OK:', response.status, errorText);
+                    showToast('Error checking services', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error checking services', 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Add service
+        async function addService(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const serviceData = {
+                service_name: formData.get('serviceName'),
+                healthcheck_url: formData.get('healthcheckUrl'),
+                healthcheck_duration_seconds: parseInt(formData.get('healthcheckDuration'))
+            };
+
+            try {
+                const response = await fetch('/api/services', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(serviceData)
+                });
+
+                if (response.ok) {
+                    const newService = await response.json();
+                    showToast('Service added successfully', 'success');
+                    closeModal('addServiceModal');
+                    event.target.reset();
+                    
+                    // Store new service data for identification
+                    const newServiceData = { ...serviceData };
+                    
+                    // Reload services and find the new one
+                    await loadServicesPreserveStatus();
+                    
+                    // Find the newly created service and check its health
+                    let found = false;
+                    document.querySelectorAll('#servicesTableBody tr').forEach(row => {
+                        const name = row.querySelector('.service-name').textContent;
+                        const url = row.querySelector('.service-url').textContent;
+                        const duration = row.querySelector('.service-duration').textContent;
+                        
+                        if (name === newServiceData.service_name && 
+                            url === newServiceData.healthcheck_url && 
+                            duration === newServiceData.healthcheck_duration_seconds + 's') {
+                            found = true;
+                            const serviceId = newServiceData.service_name; // Use name as identifier
+                            checkServiceHealth(serviceId);
+                        }
+                    });
+                    
+                    if (!found) {
+                        // Fallback: check all services
+                        checkAllServicesHealth(true); // Auto-check
+                    }
+                } else {
+                    showToast('Error adding service', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error adding service', 'error');
+            }
+        }
+
+        // Edit service
+        async function editService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (!service) return;
+
+            currentServiceId = serviceId;
+            document.getElementById('editServiceId').value = service.id;
+            document.getElementById('editServiceName').value = service.service_name;
+            document.getElementById('editHealthcheckUrl').value = service.healthcheck_url;
+            document.getElementById('editHealthcheckDuration').value = service.healthcheck_duration_seconds;
+
+            document.getElementById('editServiceModal').classList.add('show');
+        }
+
+        // Update service
+        async function updateService(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const serviceData = {
+                service_name: formData.get('serviceName'),
+                healthcheck_url: formData.get('healthcheckUrl'),
+                healthcheck_duration_seconds: parseInt(formData.get('healthcheckDuration'))
+            };
+
+            try {
+                const response = await fetch(`/api/services/${currentServiceId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(serviceData)
+                });
+
+                if (response.ok) {
+                    showToast('Service updated successfully', 'success');
+                    closeModal('editServiceModal');
+                    
+                    // Reload services and check health for updated service
+                    await loadServicesPreserveStatus();
+                    checkServiceHealth(currentServiceId);
+                } else {
+                    showToast('Error updating service', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error updating service', 'error');
+            }
+        }
+
+        // Delete service
+        async function deleteService(serviceId) {
+            if (!confirm('Are you sure you want to delete this service?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/services/${serviceId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast('Service deleted successfully', 'success');
+                    loadServices();
+                } else {
+                    showToast('Error deleting service', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting service', 'error');
+            }
+        }
+
+        // Restart collectors
+        async function restartCollectors() {
+            if (!confirm('Are you sure you want to restart all metric collectors? This will stop and restart all background health checks.')) {
+                return;
+            }
+            
+            const button = document.getElementById('restartCollectorsBtn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner"></span> Restarting...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/api/metrics/restart', { method: 'POST' });
+                if (response.ok) {
+                    showToast('Metric collectors restarted successfully!', 'success');
+                    checkAllServicesHealth(true); // Auto-check
+                } else {
+                    showToast('Error restarting metric collectors.', 'error');
+                }
+            } catch (error) {
+                console.error('Error restarting collectors:', error);
+                showToast('Error restarting metric collectors.', 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Modal functions
+        function openAddServiceModal() {
+            document.getElementById('addServiceModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        });
+
+        // Form event listeners
+        document.getElementById('serviceForm').addEventListener('submit', addService);
+        document.getElementById('editServiceForm').addEventListener('submit', updateService);
+
+        // Update stats
+        function updateStats() {
+            const totalServices = services.length;
+            const healthyServices = document.querySelectorAll('.status-badge.status-up').length;
+            
+            document.getElementById('totalServices').textContent = totalServices;
+            document.getElementById('healthyServices').textContent = healthyServices;
+            
+            // Calculate real average response time from collected data
+            let avgResponseTime = 'N/A';
+            if (responseTimes.size > 0) {
+                const totalResponseTime = Array.from(responseTimes.values()).reduce((sum, time) => sum + time, 0);
+                const average = Math.round(totalResponseTime / responseTimes.size);
+                avgResponseTime = `${average}ms`;
+                console.log(`📊 Calculated average response time: ${average}ms from ${responseTimes.size} services`);
+            }
+            document.getElementById('avgResponseTime').textContent = avgResponseTime;
+            
+            // Calculate uptime based on healthy vs total services
+            let uptime = 'N/A';
+            if (totalServices > 0) {
+                const uptimePercentage = ((healthyServices / totalServices) * 100).toFixed(1);
+                uptime = `${uptimePercentage}%`;
+                console.log(`📊 Calculated uptime: ${uptimePercentage}% (${healthyServices}/${totalServices} healthy)`);
+            }
+            document.getElementById('uptime').textContent = uptime;
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <span class="toast-title">${type === 'success' ? 'Success' : 'Error'}</span>
+                    <button class="toast-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Auto-refresh stats every 30 seconds
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+</html>

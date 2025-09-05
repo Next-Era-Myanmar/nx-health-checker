@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # Scrape the NX Health Checker app
+  - job_name: "health_check"
+    static_configs:
+      - targets: ["nx-health-checker:3030"]
+
+  # Scrape Prometheus itself
+  # - job_name: "prometheus"
+  #   static_configs:
+  #     - targets: ["localhost:9090"]
